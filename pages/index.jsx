@@ -1,8 +1,11 @@
 import Head from "next/head";
 import { useRouter } from "next/router";
 import { useState, useEffect } from "react";
+import useUser from "../hooks/useUser";
 
 export default function Home() {
+  const { user, logout } = useUser();
+
   const router = useRouter();
   const [userInputs, setUserInputs] = useState({ name: "", age: "" });
 
