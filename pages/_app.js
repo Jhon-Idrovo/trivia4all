@@ -3,6 +3,10 @@ import Head from "next/head";
 import "../styles/global.css";
 import NavBar from "../components/NavBar";
 
+import { QueryClientProvider, QueryClient } from "react-query";
+
+const queryClient = new QueryClient();
+
 export default function App({ Component, pageProps }) {
   return (
     <>
@@ -17,7 +21,9 @@ export default function App({ Component, pageProps }) {
       </Head>
 
       <NavBar />
-      <Component {...pageProps} />
+      <QueryClientProvider client={queryClient}>
+        <Component {...pageProps} />
+      </QueryClientProvider>
     </>
   );
 }

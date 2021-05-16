@@ -3,8 +3,12 @@ import { useRouter } from "next/router";
 import { useState, useEffect } from "react";
 import useUser from "../hooks/useUser";
 
+import useScores from "../hooks/useScores";
+import FirebaseAuth from "../components/auth/FirebaseAuth";
+
 export default function Home() {
   const { user, logout } = useUser();
+  const [scores, setScores] = useState([]);
 
   const router = useRouter();
   const [userInputs, setUserInputs] = useState({ name: "", age: "" });
