@@ -1,34 +1,33 @@
-import React from "react";
-import { getCategoryCode, calcPoints } from "../lib/trivia";
-import Question from "../components/Question";
+import axios from 'axios';
+import { GetServerSideProps } from 'next';
+import React, { MouseEvent, useEffect, useRef, useState } from 'react';
 
-import { useState, useEffect, useRef } from "react";
+import Question from '../components/Question';
+import {
+    calcPoints, Category, getCategoryCode, IClientQuestion, IServerQuestion
+} from '../lib/trivia';
 
-import axios from "axios";
-
-function Trivia({ questions }) {
+function Trivia({ questions }: { questions: IClientQuestion[] }) {
   const [question, setQuestion] = useState(0);
   const [bar, setBar] = useState(questions.map(() => " "));
   const [time, setTime] = useState(0); //in seconds
   const [isPlaying, setIsPlaying] = useState(true);
 
-  const intervalRef = useRef();
-  const pointsRef = useRef();
-
+  const intervalRef = useRef<ReturnType<typeof setInterval>>();
+  const pointsRef = useRef<null | number>(null);
+  // Start the timer once the page loads
   useEffect(() => {
-    console.log("EFFECT");
     intervalRef.current = setInterval(() => setTime((time) => time + 1), 1000);
     return () => {
-      console.log("EFFECT  CLEANUP");
-      clearInterval(intervalRef.current);
+      clearInterval(intervalRef.current as unknown as number);
     };
   }, []);
 
-  const handleClick = (e, selection) => {
+  const handleClick = (e: MouseEvent<HTMLInputElement>, selection: number) => {
     /*if the user doesn't select any option
       false will be passed as selection. 
     */
-    parseInt(selection) === questions[question].answerIndex
+    selection === questions[question].answerIndex
       ? updatePgrsBar("correct")
       : updatePgrsBar("incorrect");
 
@@ -36,12 +35,12 @@ function Trivia({ questions }) {
       setQuestion((question) => question + 1);
     } else {
       //if the user has ended the trivia
-      clearInterval(intervalRef.current);
+      clearInterval(intervalRef.current as unknown as number);
       setIsPlaying(false);
     }
   };
 
-  const updatePgrsBar = (signal) => {
+  const updatePgrsBar = (signal: string) => {
     let newBar = [...bar];
     newBar[question] = signal;
     setBar(newBar);
@@ -82,28 +81,31 @@ function Trivia({ questions }) {
 
 export default Trivia;
 
-export async function getServerSideProps({ params }) {
+export const getServerSideProps: GetServerSideProps = async ({ params }) => {
   const diff = "easy";
-  const code = getCategoryCode(params.categoryName);
+  const code = getCategoryCode(params?.categoryName as Category);
   const url = `https://opentdb.com/api.php?amount=20&category=${code}&difficulty=${diff}&type=multiple`;
-  console.log(url);
 
   const questions = await axios.get(url).then((res) => {
-    const questions = res.data.results;
+    const questions = res.data.results as IServerQuestion[];
 
     const formattedQuestions = questions.map((q) => {
       let options = q.incorrect_answers;
-      //to render the randomly
+      //to render them randomly
       const len = options.length;
       const randIndex = Math.floor(Math.random() * (len + 1));
 
       options.splice(randIndex, 0, q.correct_answer);
 
-      return { question: q.question, options: options, answerIndex: randIndex };
+      return {
+        question: q.question,
+        options: options,
+        answerIndex: randIndex,
+      } as IClientQuestion;
     });
 
     return formattedQuestions;
   });
 
   return { props: { questions } };
-}
+};

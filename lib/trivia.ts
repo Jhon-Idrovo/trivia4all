@@ -25,14 +25,35 @@ const CATEGORIES = {
   Cartoons: 31,
 };
 
+export declare type Category = keyof typeof CATEGORIES;
+export declare interface IUser {
+  id: string;
+  email: string;
+  token: string;
+  name: string;
+  profilePic: string;
+}
+export declare interface IServerQuestion {
+  category: string;
+  type: string;
+  difficulty: string;
+  question: string;
+  correct_answer: string;
+  incorrect_answers: string[];
+}
+export declare interface IClientQuestion {
+  options: string[];
+  answerIndex: number;
+  question: string;
+}
 export const getAllCategoryNames = () => {
   const categories = Object.keys(CATEGORIES);
-  return categories;
+  return categories as Category[];
 };
-export const getCategoryCode = (name) => {
+export const getCategoryCode = (name: Category) => {
   return CATEGORIES[name];
 };
 
-export const calcPoints = (answers) => {
+export const calcPoints = (answers: string[]) => {
   return answers.filter((a) => a === "correct").length * 100;
 };

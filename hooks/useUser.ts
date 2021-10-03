@@ -1,19 +1,18 @@
-import { useEffect, useState } from "react";
-import { useRouter } from "next/router";
-import firebase from "firebase/app";
-import "firebase/auth";
-import initFirebase from "../firebase/initFirebase";
-import {
-  removeUserCookie,
-  setUserCookie,
-  getUserFromCookie,
-} from "../firebase/userCookies";
-import { mapUserData } from "../firebase/mapUserData";
+import 'firebase/auth';
+
+import firebase from 'firebase/app';
+import { useRouter } from 'next/router';
+import { useEffect, useState } from 'react';
+
+import initFirebase from '../firebase/initFirebase';
+import { mapUserData } from '../firebase/mapUserData';
+import { getUserFromCookie, removeUserCookie, setUserCookie } from '../firebase/userCookies';
+import { IUser } from '../lib/trivia';
 
 initFirebase();
 
 const useUser = () => {
-  const [user, setUser] = useState();
+  const [user, setUser] = useState<undefined | IUser>();
   const router = useRouter();
 
   const logout = async () => {
@@ -33,6 +32,7 @@ const useUser = () => {
     // Firebase updates the id token every hour, this
     // makes sure the react state and the cookie are
     // both kept up to date
+    // This is trigered on sign-in, sign-out, and token refresh events. https://firebase.google.com/docs/reference/js/v8/firebase.auth.Auth#onidtokenchanged
     const cancelAuthListener = firebase.auth().onIdTokenChanged((user) => {
       if (user) {
         const userData = mapUserData(user);
@@ -40,7 +40,7 @@ const useUser = () => {
         setUser(userData);
       } else {
         removeUserCookie();
-        setUser();
+        setUser(undefined);
       }
     });
 
@@ -52,6 +52,7 @@ const useUser = () => {
     setUser(userFromCookie);
 
     return () => {
+      // Kills the listener
       cancelAuthListener();
     };
   }, []);

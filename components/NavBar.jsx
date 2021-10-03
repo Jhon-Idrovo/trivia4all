@@ -33,7 +33,7 @@ function NavBar() {
 
             <ul className="sub-nav">
               {getAllCategoryNames().map((cat) => (
-                <li className="sub-nav-category-item">
+                <li key={cat} className="sub-nav-category-item">
                   <a href={`/${cat}`}> {cat}</a>
                 </li>
               ))}

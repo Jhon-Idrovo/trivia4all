@@ -3,13 +3,13 @@ import "firebase/firestore";
 import "firebase/auth";
 
 const firebaseConfig = {
-  apiKey: process.env.API_KEY,
-  authDomain: process.env.AUTH_DOMAIN,
-  projectId: process.env.PROJECT_ID,
-  storageBucket: process.env.STORAGE_BUCKET,
-  messagingSenderId: process.env.MESSAGING_SENDER_ID,
-  appId: process.env.APP_ID,
-  measurementId: process.env.MEASUREMENT_ID,
+  apiKey: "AIzaSyA8n1xuB7BxHAuGxePeWz1CDLjk8x5Ps9k",
+  authDomain: "trivia-app-764e4.firebaseapp.com",
+  projectId: "trivia-app-764e4",
+  storageBucket: "trivia-app-764e4.appspot.com",
+  messagingSenderId: "550098693379",
+  appId: "1:550098693379:web:8a0c582e4065dc47224d36",
+  measurementId: "G-C22GVVLLVN",
 };
 
 export default function initFirebase() {

@@ -1,28 +1,27 @@
-import Head from "next/head";
-import { useRouter } from "next/router";
-import { useState, useEffect } from "react";
-import useUser from "../hooks/useUser";
+import Head from 'next/head';
+import { useRouter } from 'next/router';
+import { ChangeEventHandler, FormEventHandler, useEffect, useState } from 'react';
 
-import useScores from "../hooks/useScores";
-import FirebaseAuth from "../components/auth/FirebaseAuth";
+import FirebaseAuth from '../components/auth/FirebaseAuth';
+import useScores from '../hooks/useScores';
+import useUser from '../hooks/useUser';
 
 export default function Home() {
   const { user, logout } = useUser();
   const [scores, setScores] = useState([]);
 
   const router = useRouter();
-  const [userInputs, setUserInputs] = useState({ name: "", age: "" });
+  const [userInputs, setUserInputs] = useState<{ name: string, age:string }>({ name: "", age: "" });
 
-  const handleClick = (e) => {
+  const handleClick:FormEventHandler = (e) => {
     e.preventDefault();
     //send the data to some API
     router.push("/categories");
   };
-  const handleChange = (e) => {
-    console.log(e);
+  const handleChange:ChangeEventHandler<HTMLInputElement> = (e) => {
     const inputName = e.target.name;
     const inputValue = e.target.value;
-    setUserInputs({ ...userInputs, inputName: inputValue });
+    setUserInputs({ ...userInputs, [inputName]: inputValue });
   };
 
   return (

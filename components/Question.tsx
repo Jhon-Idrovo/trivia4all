@@ -1,10 +1,18 @@
-import { useState, useEffect } from "react";
+import { ChangeEventHandler, MouseEvent, useEffect, useState } from 'react';
 
-function Question({ question, options, handleClick }) {
-  const [selection, setSelection] = useState(false);
-  const handleSelection = (e) => {
-    const selectionIndex = e.target.id.split("").pop();
-    setSelection(selectionIndex);
+function Question({
+  question,
+  options,
+  handleClick,
+}: {
+  question: string;
+  options: string[];
+  handleClick: (e: MouseEvent<HTMLInputElement>, selection: number) => void;
+}) {
+  const [selection, setSelection] = useState<undefined | number>();
+  const handleSelection: ChangeEventHandler<HTMLInputElement> = (e) => {
+    const selectionIndex = e.target.id.split("").pop() as string;
+    setSelection(parseInt(selectionIndex));
   };
 
   return (
@@ -33,8 +41,9 @@ function Question({ question, options, handleClick }) {
       })}
       <input
         type="reset"
-        onClick={(e) => handleClick(e, selection)}
+        onClick={(e) => handleClick(e, selection as number)}
         className="form-btn question-submit"
+        disabled={selection === undefined}
         value="Next!"
       ></input>
     </form>
